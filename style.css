@@ -58,10 +58,12 @@ body {
   gap: 6px;
 }
 
-.form-group label {
+.form-group label,
+.form-label {
   font-weight: 600;
 }
 
+/* 輸入框樣式 */
 .form-group input[type="text"],
 .form-group input[type="date"] {
   padding: 10px 12px;
@@ -76,6 +78,24 @@ body {
   outline: none;
   border-color: #ff9a9e;
   box-shadow: 0 0 0 3px rgba(255, 154, 158, 0.25);
+}
+
+/* 體型選擇區 */
+.size-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  font-size: 0.95rem;
+}
+
+.size-options label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: #fff7fb;
+  border: 1px solid #f9c4d2;
 }
 
 /* 按鈕 */
@@ -148,5 +168,10 @@ body {
 @media (max-width: 480px) {
   .app {
     margin-top: 24px;
+  }
+
+  .size-options {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }

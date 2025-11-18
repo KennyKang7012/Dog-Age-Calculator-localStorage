@@ -1,13 +1,13 @@
 // === 狗狗歲數計算機主程式 ===
 
-// localStorage 的 key，清楚說明用途：用來記錄上一次輸入與計算結果
+// localStorage 的 key，清楚說明用途：用來記錄上一次輸入與計算結果（含體型）
 const STORAGE_KEY = "dogAgeCalculator:lastResult";
 
-// 等待整個網頁載入完成後再執行
 document.addEventListener("DOMContentLoaded", () => {
   const dogForm = document.getElementById("dog-form");
   const dogNameInput = document.getElementById("dogName");
   const dogBirthdayInput = document.getElementById("dogBirthday");
+  const sizeInputs = document.querySelectorAll('input[name="dogSize"]');
 
   const resultSection = document.getElementById("resultSection");
   const dogAgeText = document.getElementById("dogAgeText");
@@ -25,6 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const name = dogNameInput.value.trim();
     const birthdayStr = dogBirthdayInput.value; // yyyy-mm-dd 字串
+    const size = getSelectedSize();
 
     if (!name) {
       alert("請先輸入狗狗名字喔！");
@@ -48,12 +49,12 @@ document.addEventListener("DOMContentLoaded", () => {
     // 計算狗狗實際年齡（年＋月＋總年數）
     const ageInfo = calcDogAge(birthdayDate, today);
 
-    // 依照狗狗實際年齡（以年為單位）換算成人類年齡
-    const humanAge = convertDogAgeToHuman(ageInfo.totalYears);
+    // 依照狗狗實際年齡（以年為單位）＋ 體型，換算成人類年齡
+    const humanAge = convertDogAgeToHuman(ageInfo.totalYears, size);
 
     // 把結果組合成要顯示的文字
     const dogAgeDisplayText = buildDogAgeDisplayText(name, ageInfo);
-    const humanAgeDisplayText = buildHumanAgeDisplayText(name, humanAge);
+    const humanAgeDisplayText = buildHumanAgeDisplayText(name, humanAge, size);
 
     // 顯示在畫面上
     dogAgeText.textContent = dogAgeDisplayText;
@@ -64,6 +65,7 @@ document.addEventListener("DOMContentLoaded", () => {
     saveLastResult({
       name,
       birthdayStr,
+      size,
       dogAgeDisplayText,
       humanAgeDisplayText,
     });
@@ -76,7 +78,6 @@ document.addEventListener("DOMContentLoaded", () => {
    */
   function setTodayAsMaxDate(inputEl) {
     const today = getTodayWithoutTime();
-    // 將日期格式化成 yyyy-mm-dd 給 input 使用
     const yyyy = today.getFullYear();
     const mm = String(today.getMonth() + 1).padStart(2, "0");
     const dd = String(today.getDate()).padStart(2, "0");
@@ -96,7 +97,6 @@ document.addEventListener("DOMContentLoaded", () => {
    * - 傳回 { years: 幾歲, months: 幾個月(0-11), totalYears: 以年為單位的浮點數 }
    */
   function calcDogAge(birthday, today) {
-    // 以「天數」來計算差距，再換算成年
     const diffMs = today - birthday; // 毫秒差
     const diffDays = diffMs / (1000 * 60 * 60 * 24);
 
@@ -113,15 +113,32 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /**
-   * 狗狗歲數換算人類歲數（常見的經驗公式）：
-   * - 第 1 年：約 15 人類歲
-   * - 第 2 年：再加 9 人類歲（合計 24）
-   * - 之後每增加 1 狗年：再加約 4 人類歲
-   *
-   * 這裡使用「狗狗實際年齡（浮點數）」進行插值換算：
-   * 例：0.5 歲 ≈ 0.5 * 15
+   * 取得目前選擇的狗狗體型（small / medium / large）
+   * 若沒有選到就預設回傳 "medium"
    */
-  function convertDogAgeToHuman(dogYears) {
+  function getSelectedSize() {
+    for (const input of sizeInputs) {
+      if (input.checked) {
+        return input.value;
+      }
+    }
+    return "medium";
+  }
+
+  /**
+   * 狗狗歲數換算人類歲數（體型微調版）：
+   * 共用基本觀念：
+   *  - 第 1 年 ≈ 15 人類歲
+   *  - 第 2 年再加 9 人類歲（共 24）
+   *
+   * 不同體型在「2 歲之後」的換算略有不同（簡化假設）：
+   *  - 小型犬：每增加 1 狗年 ≈ +4 人類歲
+   *  - 中型犬：每增加 1 狗年 ≈ +5 人類歲
+   *  - 大型犬：每增加 1 狗年 ≈ +6 人類歲
+   *
+   * ※ 這只是常見說法的簡化版，實際年齡仍會因品種與健康狀況不同。
+   */
+  function convertDogAgeToHuman(dogYears, size) {
     if (dogYears <= 0) return 0;
 
     let humanYears;
@@ -129,11 +146,22 @@ document.addEventListener("DOMContentLoaded", () => {
     if (dogYears <= 1) {
       humanYears = dogYears * 15;
     } else if (dogYears <= 2) {
-      // 第 1 年先給 15 歲，第二年這段部分按比例乘以 9
       humanYears = 15 + (dogYears - 1) * 9;
     } else {
-      // 前 2 年是 24 歲，之後每年加 4 歲
-      humanYears = 24 + (dogYears - 2) * 4;
+      let ratePerYear;
+      switch (size) {
+        case "small":
+          ratePerYear = 4;
+          break;
+        case "large":
+          ratePerYear = 6;
+          break;
+        case "medium":
+        default:
+          ratePerYear = 5;
+          break;
+      }
+      humanYears = 24 + (dogYears - 2) * ratePerYear;
     }
 
     return humanYears;
@@ -151,7 +179,6 @@ document.addEventListener("DOMContentLoaded", () => {
     } else if (years <= 0) {
       ageText = `${months} 個月大`;
     } else {
-      // 有年數，視情況加上月數
       if (months > 0) {
         ageText = `${years} 歲 ${months} 個月`;
       } else {
@@ -163,18 +190,32 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /**
-   * 組合人類年齡的文字描述（四捨五入到整數）
+   * 組合人類年齡的文字描述（四捨五入到整數），並帶上體型說明
    */
-  function buildHumanAgeDisplayText(name, humanYears) {
+  function buildHumanAgeDisplayText(name, humanYears, size) {
     const rounded = Math.round(humanYears);
-    return `換算成人類的年齡，${name} 大約是：${rounded} 歲左右。`;
+
+    let sizeLabel;
+    switch (size) {
+      case "small":
+        sizeLabel = "小型狗";
+        break;
+      case "large":
+        sizeLabel = "大型狗";
+        break;
+      case "medium":
+      default:
+        sizeLabel = "中型狗";
+        break;
+    }
+
+    return `以${sizeLabel}的換算方式，${name} 大約是：${rounded} 歲的人類年齡。`;
   }
 
   /**
    * 將結果存入 localStorage
    */
   function saveLastResult(data) {
-    // 多存一個時間戳也可以，之後要做紀錄列表也方便擴充
     const payload = {
       ...data,
       savedAt: new Date().toISOString(),
@@ -191,11 +232,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
     try {
       const data = JSON.parse(stored);
-      const { name, birthdayStr, dogAgeDisplayText, humanAgeDisplayText } =
-        data;
+      const {
+        name,
+        birthdayStr,
+        size,
+        dogAgeDisplayText,
+        humanAgeDisplayText,
+      } = data;
 
       if (name) dogNameInput.value = name;
       if (birthdayStr) dogBirthdayInput.value = birthdayStr;
+
+      // 若有儲存體型，幫使用者選回去
+      if (size) {
+        const sizeInput = document.querySelector(
+          `input[name="dogSize"][value="${size}"]`
+        );
+        if (sizeInput) sizeInput.checked = true;
+      }
 
       if (dogAgeDisplayText && humanAgeDisplayText) {
         dogAgeText.textContent = dogAgeDisplayText;

@@ -10,7 +10,7 @@
   <main class="app">
     <h1 class="app-title">🐾 狗狗歲數計算機</h1>
     <p class="app-subtitle">
-      輸入狗狗的名字和生日，一起看看牠現在幾歲、相當於人類幾歲吧！
+      輸入狗狗的名字、生日與體型，一起看看牠現在幾歲、相當於人類幾歲吧！
     </p>
 
     <!-- 狗狗資料輸入表單 -->
@@ -38,6 +38,38 @@
           />
         </div>
 
+        <!-- 狗狗體型選擇 -->
+        <div class="form-group">
+          <span class="form-label">狗狗體型</span>
+          <div class="size-options">
+            <label>
+              <input
+                type="radio"
+                name="dogSize"
+                value="small"
+              />
+              小型（約 10kg 以下）
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="dogSize"
+                value="medium"
+                checked
+              />
+              中型（約 10–25kg）
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="dogSize"
+                value="large"
+              />
+              大型（約 25kg 以上）
+            </label>
+          </div>
+        </div>
+
         <button type="submit" class="btn primary">計算 🐶</button>
       </form>
     </section>
@@ -55,7 +87,7 @@
     <footer class="footer">
       <p>這個小工具是用 <strong>HTML</strong> + <strong>CSS</strong> + <strong>JavaScript</strong> 製作：</p>
       <ul>
-        <li>HTML：負責結構與表單欄位（名字、生日）。</li>
+        <li>HTML：負責結構與表單欄位（名字、生日、體型）。</li>
         <li>CSS：負責顏色、排版、讓畫面看起來可愛一點。</li>
         <li>JavaScript：負責年齡計算、換算人類年齡、存取 <code>localStorage</code>。</li>
       </ul>
