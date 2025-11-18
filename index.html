@@ -2,218 +2,67 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
-  <title>🐶 狗狗歲數計算機</title>
-
-  <style>
-    body {
-      font-family: "Microsoft JhengHei", sans-serif;
-      background: #ffeef2;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      min-height: 100vh;
-      align-items: center;
-    }
-
-    .container {
-      background: #fff;
-      width: 90%;
-      max-width: 420px;
-      padding: 24px;
-      border-radius: 18px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      text-align: center;
-    }
-
-    h2 {
-      margin-bottom: 20px;
-      color: #ff6f91;
-    }
-
-    label {
-      display: block;
-      margin-top: 12px;
-      color: #444;
-      font-weight: bold;
-      text-align: left;
-    }
-
-    input, select {
-      width: 100%;
-      padding: 10px;
-      margin-top: 6px;
-      border-radius: 10px;
-      border: 1px solid #ccc;
-      font-size: 16px;
-      outline: none;
-    }
-
-    .btn-group {
-      margin-top: 20px;
-      display: flex;
-      gap: 10px;
-    }
-
-    button {
-      flex: 1;
-      padding: 12px;
-      border: none;
-      border-radius: 12px;
-      cursor: pointer;
-      font-size: 16px;
-      font-weight: bold;
-      transition: 0.2s;
-    }
-
-    .btn-calc {
-      background: #ff8fab;
-      color: white;
-    }
-
-    .btn-calc:hover {
-      background: #ff6f91;
-    }
-
-    .btn-reset {
-      background: #d3d3d3;
-    }
-
-    .btn-reset:hover {
-      background: #bcbcbc;
-    }
-
-    .result-card {
-      background: #fff1f5;
-      padding: 18px;
-      border-radius: 14px;
-      margin-top: 20px;
-      display: none;
-    }
-
-    .result-card h3 {
-      margin: 0 0 10px 0;
-      color: #ff6f91;
-    }
-  </style>
+  <title>狗狗歲數計算機</title>
+  <!-- 把 CSS 獨立成一個檔案 -->
+  <link rel="stylesheet" href="style.css" />
 </head>
-
 <body>
-  <div class="container">
-    <h2>🐾 狗狗歲數計算機</h2>
+  <main class="app">
+    <h1 class="app-title">🐾 狗狗歲數計算機</h1>
+    <p class="app-subtitle">
+      輸入狗狗的名字和生日，一起看看牠現在幾歲、相當於人類幾歲吧！
+    </p>
 
-    <label>狗狗的名字：</label>
-    <input type="text" id="dogName" placeholder="輸入狗狗名字">
+    <!-- 狗狗資料輸入表單 -->
+    <section class="card">
+      <form id="dog-form" class="dog-form">
+        <div class="form-group">
+          <label for="dogName">狗狗名字</label>
+          <input
+            type="text"
+            id="dogName"
+            name="dogName"
+            placeholder="例如：QQ、球球、布丁"
+            required
+          />
+        </div>
 
-    <label>狗狗的出生日期：</label>
-    <input type="date" id="dogBirthday">
+        <div class="form-group">
+          <label for="dogBirthday">狗狗生日</label>
+          <!-- 使用 type="date" 方便輸入日期 -->
+          <input
+            type="date"
+            id="dogBirthday"
+            name="dogBirthday"
+            required
+          />
+        </div>
 
-    <label>狗狗體型：</label>
-    <select id="dogSize">
-      <option value="small">小型犬</option>
-      <option value="medium">中型犬</option>
-      <option value="large">大型犬</option>
-    </select>
+        <button type="submit" class="btn primary">計算 🐶</button>
+      </form>
+    </section>
 
-    <div class="btn-group">
-      <button class="btn-calc" onclick="calculate()">計算</button>
-      <button class="btn-reset" onclick="resetAll()">重填</button>
-    </div>
+    <!-- 計算結果區塊（預設隱藏） -->
+    <section id="resultSection" class="card result hidden">
+      <h2>計算結果</h2>
+      <p id="dogAgeText" class="result-line"></p>
+      <p id="humanAgeText" class="result-line"></p>
+      <p class="result-note">
+        ✅ 提示：以上為概略換算結果，每隻狗狗的實際狀況仍會依品種、體型與健康狀況而不同。
+      </p>
+    </section>
 
-    <div class="result-card" id="resultCard">
-      <h3 id="nameText"></h3>
-      <p id="ageText"></p>
-      <p id="humanAgeText"></p>
-    </div>
-  </div>
+    <footer class="footer">
+      <p>這個小工具是用 <strong>HTML</strong> + <strong>CSS</strong> + <strong>JavaScript</strong> 製作：</p>
+      <ul>
+        <li>HTML：負責結構與表單欄位（名字、生日）。</li>
+        <li>CSS：負責顏色、排版、讓畫面看起來可愛一點。</li>
+        <li>JavaScript：負責年齡計算、換算人類年齡、存取 <code>localStorage</code>。</li>
+      </ul>
+    </footer>
+  </main>
 
-  <script>
-    // -------- 自動載入 localStorage --------
-    window.onload = function () {
-      const saved = localStorage.getItem("dogData");
-      if (saved) {
-        const data = JSON.parse(saved);
-        document.getElementById("dogName").value = data.name;
-        document.getElementById("dogBirthday").value = data.birthday;
-        document.getElementById("dogSize").value = data.size;
-
-        showResult(data);
-      }
-    };
-
-    // -------- 計算邏輯 --------
-    function calculate() {
-      const name = document.getElementById("dogName").value.trim();
-      const birthday = document.getElementById("dogBirthday").value;
-      const size = document.getElementById("dogSize").value;
-
-      if (!name || !birthday) {
-        alert("請輸入完整資訊！");
-        return;
-      }
-
-      const dogAge = getDogAge(birthday);
-      const humanAge = convertHumanAge(dogAge, size);
-
-      const data = { 
-        name, 
-        birthday, 
-        size, 
-        dogAge, 
-        humanAge 
-      };
-
-      // 儲存到 localStorage
-      localStorage.setItem("dogData", JSON.stringify(data));
-
-      showResult(data);
-    }
-
-    // -------- 計算狗狗實際年齡 --------
-    function getDogAge(birthday) {
-      const birth = new Date(birthday);
-      const today = new Date();
-
-      let age = today.getFullYear() - birth.getFullYear();
-      const hasBirthdayPassed =
-        today.getMonth() > birth.getMonth() ||
-        (today.getMonth() === birth.getMonth() && today.getDate() >= birth.getDate());
-
-      if (!hasBirthdayPassed) age--;
-
-      return age;
-    }
-
-    // -------- 換算人類年齡（依體型） --------
-    function convertHumanAge(dogAge, size) {
-      const rate = {
-        small: 5,
-        medium: 6,
-        large: 7,
-      };
-      return dogAge * rate[size];
-    }
-
-    // -------- 顯示結果 --------
-    function showResult(data) {
-      document.getElementById("nameText").innerText = `🐶 ${data.name}`;
-      document.getElementById("ageText").innerText = `狗狗的實際年齡：${data.dogAge} 歲`;
-      document.getElementById("humanAgeText").innerText = `換算人類年齡：約 ${data.humanAge} 歲`;
-
-      document.getElementById("resultCard").style.display = "block";
-    }
-
-    // -------- 重填功能 --------
-    function resetAll() {
-      document.getElementById("dogName").value = "";
-      document.getElementById("dogBirthday").value = "";
-      document.getElementById("dogSize").value = "small"; // 預設
-
-      localStorage.removeItem("dogData");
-
-      document.getElementById("resultCard").style.display = "none";
-    }
-  </script>
-
+  <!-- 把 JS 獨立成一個檔案 -->
+  <script src="script.js"></script>
 </body>
 </html>

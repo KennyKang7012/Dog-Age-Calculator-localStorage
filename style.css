@@ -1,0 +1,152 @@
+/* ===== 基本重置 & 版面設定 ===== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "PingFang TC", "Microsoft JhengHei", sans-serif;
+  background: radial-gradient(circle at top, #ffe9f0, #fff5d9);
+  color: #333;
+  min-height: 100vh;
+}
+
+/* 主要容器 */
+.app {
+  max-width: 700px;
+  margin: 40px auto;
+  padding: 0 16px 40px;
+}
+
+/* 標題與副標題 */
+.app-title {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 8px;
+}
+
+.app-subtitle {
+  text-align: center;
+  color: #555;
+  margin-bottom: 24px;
+}
+
+/* 卡片樣式 */
+.card {
+  background: #ffffffcc;
+  backdrop-filter: blur(4px);
+  border-radius: 16px;
+  padding: 20px 20px 24px;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.06);
+  margin-bottom: 20px;
+}
+
+/* 表單相關 */
+.dog-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label {
+  font-weight: 600;
+}
+
+.form-group input[type="text"],
+.form-group input[type="date"] {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 1rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-group input[type="text"]:focus,
+.form-group input[type="date"]:focus {
+  outline: none;
+  border-color: #ff9a9e;
+  box-shadow: 0 0 0 3px rgba(255, 154, 158, 0.25);
+}
+
+/* 按鈕 */
+.btn {
+  border: none;
+  border-radius: 999px;
+  padding: 10px 18px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.1s ease, opacity 0.2s ease;
+}
+
+.btn.primary {
+  background: linear-gradient(135deg, #ff9a9e, #fecfef);
+  color: #503136;
+  align-self: flex-end;
+  box-shadow: 0 8px 16px rgba(255, 154, 158, 0.3);
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 18px rgba(0, 0, 0, 0.1);
+}
+
+.btn:active {
+  transform: translateY(0);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* 結果文字 */
+.result h2 {
+  margin-bottom: 10px;
+}
+
+.result-line {
+  margin-bottom: 6px;
+  font-size: 1.05rem;
+}
+
+.result-note {
+  margin-top: 8px;
+  font-size: 0.9rem;
+  color: #777;
+}
+
+/* 隱藏用的 class（由 JS 控制顯示/隱藏） */
+.hidden {
+  display: none;
+}
+
+/* 頁尾 */
+.footer {
+  font-size: 0.9rem;
+  color: #666;
+  margin-top: 16px;
+  line-height: 1.5;
+}
+
+.footer ul {
+  margin-top: 4px;
+  padding-left: 20px;
+}
+
+.footer li {
+  list-style: disc;
+}
+
+/* 手機版優化 */
+@media (max-width: 480px) {
+  .app {
+    margin-top: 24px;
+  }
+}
